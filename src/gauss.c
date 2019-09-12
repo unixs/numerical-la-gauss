@@ -5,9 +5,9 @@
 #define MATRIX_SIZE 3
 
 static double d_matrix[MATRIX_SIZE][MATRIX_SIZE] = {
-    {1., 4., 2.},
-    {-1., -2., 1.},
-    {3., 20., 19.},
+  {1., 4., 2.},
+  {-1., -2., 1.},
+  {3., 20., 19.},
 };
 static double d_vector[3] = {8, 3, 71};
 
@@ -55,15 +55,15 @@ int main(void) {
       d_vector[row] = d_vector[row] - multiplier * d_vector[step];
 
       // Walk by matrix cells
-      for (size_t col = step + 1; col < MATRIX_SIZE; col++) {
+      for (size_t col = step + 1, col0 = step; col < MATRIX_SIZE; col++, col0++) {
         double *cell = &(d_matrix[row][col]);
 
         *cell = *cell - multiplier * d_matrix[step][col];
-      }
 
-      // Zero processed cells
-      for (size_t col = 0; col < row; col++) {
-        d_matrix[row][col] = 0;
+        // Zero processed cells
+        if (col0 < row) {
+          d_matrix[row][col0] = 0;
+        }
       }
     }
   }
