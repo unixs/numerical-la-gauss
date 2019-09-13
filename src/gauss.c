@@ -96,7 +96,6 @@ int main(void) {
   printf("Result:\n");
 
   for (size_t i = 0; i < MATRIX_SIZE; i++) {
-    // double el = gsl_matrix_get(r_vector, 0, j);
     printf("%zu - %f\n", i, gsl_vector_get(result, i));
   }
 
@@ -109,7 +108,6 @@ int main(void) {
       sum += gsl_matrix_get(orig_matrix, row, col) * gsl_vector_get(result, col);
     }
 
-    // double el = gsl_matrix_get(r_vector, 0, j);
     printf("%f = %f\n", sum, gsl_vector_get(orig_vector, row));
   }
 
