@@ -5,12 +5,17 @@
 #define MATRIX_SIZE 3
 
 static double d_matrix[MATRIX_SIZE][MATRIX_SIZE] = {
-  {1., 4., 2.},
-  {-1., -2., 1.},
-  {3., 20., 19.},
+  {1., 1., 1.},
+  {2., 3., 1.},
+  {1., -1., -1.},
 };
-static double d_vector[] = {8, 3, 71};
-static double d_vector_orig[] = {8, 3, 71};
+static double d_orig_matrix[MATRIX_SIZE][MATRIX_SIZE] = {
+  {1., 1., 1.},
+  {2., 3., 1.},
+  {1., -1., -1.},
+};
+static double d_vector[] = {4., 9., -2.};
+static double d_vector_orig[] = {4., 9., -2.};
 static double r_vector[] = {0, 0, 0};
 
 int main(void) {
@@ -52,20 +57,16 @@ int main(void) {
     // Walk by matrix rows
     for (size_t row = step + 1; row < MATRIX_SIZE; row++) {
       double multiplier = d_matrix[row][step] / d_matrix[step][step];
+      d_matrix[row][step] = 0;
 
       // Update vector value
       d_vector[row] = d_vector[row] - multiplier * d_vector[step];
 
       // Walk by matrix cells
-      for (size_t col = step + 1, col0 = step; col < MATRIX_SIZE; col++, col0++) {
+      for (size_t col = step + 1; col < MATRIX_SIZE; col++) {
         double *cell = &(d_matrix[row][col]);
 
         *cell = *cell - multiplier * d_matrix[step][col];
-
-        // Zero processed cells
-        if (col0 < row) {
-          d_matrix[row][col0] = 0;
-        }
       }
     }
   }
@@ -104,7 +105,7 @@ int main(void) {
     double sum = 0;
 
     for (size_t col = 0; col < MATRIX_SIZE; col++) {
-      sum += d_matrix[row][col] * r_vector[col];
+      sum += d_orig_matrix[row][col] * r_vector[col];
     }
 
     // double el = gsl_matrix_get(r_vector, 0, j);
