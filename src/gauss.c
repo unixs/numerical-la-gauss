@@ -5,23 +5,23 @@
 #define MATRIX_SIZE 3
 
 static double d_matrix[MATRIX_SIZE][MATRIX_SIZE] = {
-  {1., 1., 1.},
-  {2., 3., 1.},
-  {1., -1., -1.},
+  {1., 4., 2.},
+  {-1., -2., 1.},
+  {3., 20., 19.},
 };
-static double d_vector[] = {4., 9., -2.};
+static double d_vector[] = {8., 3., 71.};
 
 int main(void) {
   printf("Gauss.\n\n");
 
   // Alloc matrix`s
-  gsl_matrix *matrix = gsl_matrix_calloc(MATRIX_SIZE, MATRIX_SIZE);
-  gsl_matrix *orig_matrix = gsl_matrix_calloc(MATRIX_SIZE, MATRIX_SIZE);
+  gsl_matrix *matrix = gsl_matrix_alloc(MATRIX_SIZE, MATRIX_SIZE);
+  gsl_matrix *orig_matrix = gsl_matrix_alloc(MATRIX_SIZE, MATRIX_SIZE);
 
-  gsl_vector *vector = gsl_vector_calloc(MATRIX_SIZE);
-  gsl_vector *orig_vector = gsl_vector_calloc(MATRIX_SIZE);
+  gsl_vector *vector = gsl_vector_alloc(MATRIX_SIZE);
+  gsl_vector *orig_vector = gsl_vector_alloc(MATRIX_SIZE);
 
-  gsl_vector *result = gsl_vector_calloc(MATRIX_SIZE);
+  gsl_vector *result = gsl_vector_alloc(MATRIX_SIZE);
 
   // Init matrix
   for (size_t i = 0; i < MATRIX_SIZE; i++) {
@@ -78,14 +78,14 @@ int main(void) {
 
   // Back
 
-  for (ssize_t eqIdx = MATRIX_SIZE - 1; eqIdx >= 0; eqIdx--) { //1
+  for (ssize_t eq_idx = MATRIX_SIZE - 1; eq_idx >= 0; eq_idx--) { //1
     double sum = 0;
 
-    for (size_t col = eqIdx + 1; col <= MATRIX_SIZE - 1; col++) { // 2
-      sum += gsl_matrix_get(matrix, eqIdx, col) * gsl_vector_get(vector, col);
+    for (size_t col = eq_idx + 1; col <= MATRIX_SIZE - 1; col++) { // 2
+      sum += gsl_matrix_get(matrix, eq_idx, col) * gsl_vector_get(result, col);
     }
 
-    gsl_vector_set(result, eqIdx, (gsl_vector_get(vector, eqIdx) - sum) / gsl_matrix_get(matrix, eqIdx, eqIdx));
+    gsl_vector_set(result, eq_idx, (gsl_vector_get(vector, eq_idx) - sum) / gsl_matrix_get(matrix, eq_idx, eq_idx));
   }
 
   // /Back
