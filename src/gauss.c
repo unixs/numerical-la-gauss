@@ -9,7 +9,9 @@ static double d_matrix[MATRIX_SIZE][MATRIX_SIZE] = {
   {-1., -2., 1.},
   {3., 20., 19.},
 };
-static double d_vector[3] = {8, 3, 71};
+static double d_vector[] = {8, 3, 71};
+static double d_vector_orig[] = {8, 3, 71};
+static double r_vector[] = {0, 0, 0};
 
 int main(void) {
   printf("Gauss.\n\n");
@@ -74,21 +76,40 @@ int main(void) {
 
   // Back
 
-  //for (size_t) {
+  for (ssize_t eqIdx = MATRIX_SIZE - 1; eqIdx >= 0; eqIdx--) { //1
+    double sum = 0;
 
-  //}
+    for (size_t col = eqIdx + 1; col <= MATRIX_SIZE - 1; col++) { // 2
+      sum += d_matrix[eqIdx][col] * r_vector[col];
+    }
+
+    r_vector[eqIdx] = (d_vector[eqIdx] - sum) / d_matrix[eqIdx][eqIdx];
+  }
 
   // /Back
 
   // /Gauss
 
-/*
+
   printf("Result:\n");
 
-  for (size_t j = 0; j < MATRIX_SIZE; j++) {
-    double el = gsl_matrix_get(result, 0, j);
-    printf("%zu - %f\n", j, el);
+  for (size_t i = 0; i < MATRIX_SIZE; i++) {
+    // double el = gsl_matrix_get(r_vector, 0, j);
+    printf("%zu - %f\n", i, r_vector[i]);
   }
-*/
+
+  printf("\nCheck:\n");
+
+  for (size_t row = 0; row < MATRIX_SIZE; row++) {
+    double sum = 0;
+
+    for (size_t col = 0; col < MATRIX_SIZE; col++) {
+      sum += d_matrix[row][col] * r_vector[col];
+    }
+
+    // double el = gsl_matrix_get(r_vector, 0, j);
+    printf("%f = %f\n", sum, d_vector_orig[row]);
+  }
+
   return 0;
 }
