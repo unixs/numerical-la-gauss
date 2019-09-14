@@ -47,9 +47,32 @@ int main(void) {
   // Steps by equations
   for (size_t step = 0; step < MATRIX_SIZE - 1; step++) {
 
+
     // Walk by matrix rows
     for (size_t eq_idx = step + 1; eq_idx < MATRIX_SIZE; eq_idx++) {
-      double multiplier = gsl_matrix_get(matrix, eq_idx, step) / gsl_matrix_get(matrix, step, step);
+      // Multiplier
+
+      {
+        // Get vector column from submatrix
+        size_t subcol_size = MATRIX_SIZE - eq_idx;
+        gsl_vector_view col = gsl_matrix_subcolumn(matrix, eq_idx, eq_idx, subcol_size);
+
+        // Find max idx
+        gsl_vector *col_copy = gsl_vector_alloc(subcol_size);
+        gsl_vector_memcpy(col_copy, &col.vector);
+        for (size_t i = 0; i < subcol_size; i++) {
+          gsl_vector_set(col_copy, i, abs(gsl_vector_get(&col.vector, i)));
+        }
+        size_t eq_max_idx = gsl_vector_max_index(&col.vector) + eq_idx;
+
+        // swap rows
+        if (eq_idx != eq_max_idx) {
+          gsl_matrix_swap_rows(matrix, eq_idx, eq_max_idx);
+        }
+      }
+
+      double divider = gsl_matrix_get(matrix, step, step);
+      double multiplier = gsl_matrix_get(matrix, eq_idx, step) / divider;
 
       gsl_matrix_set(matrix, eq_idx, step, 0);
 
@@ -68,7 +91,7 @@ int main(void) {
 
   // /Forward
 
-  // Check det
+  // det
 
   double det = 1;
   for (size_t i = 0; i < MATRIX_SIZE; i++) {
@@ -76,6 +99,8 @@ int main(void) {
   }
 
   printf("det = %f\n\n", det);
+
+  // /det
 
   // Back
 
