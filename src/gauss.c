@@ -16,19 +16,25 @@ int main(void) {
 
   // Alloc matrix`s
   gsl_matrix *matrix = gsl_matrix_alloc(MATRIX_SIZE, MATRIX_SIZE);
+  // gsl_matrix *orig_matrix = gsl_matrix_alloc(MATRIX_SIZE, MATRIX_SIZE);
+
   gsl_vector *vector = gsl_vector_alloc(MATRIX_SIZE);
+  // gsl_vector *orig_vector = gsl_vector_alloc(MATRIX_SIZE);
+
   gsl_vector *result = gsl_vector_alloc(MATRIX_SIZE);
 
   // Init matrix
   for (size_t i = 0; i < MATRIX_SIZE; i++) {
     for (size_t j = 0; j < MATRIX_SIZE; j++) {
       gsl_matrix_set(matrix, i, j, d_matrix[i][j]);
+      // gsl_matrix_set(orig_matrix, i, j, d_matrix[i][j]);
     }
   }
 
   // Init vector
   for (size_t j = 0; j < MATRIX_SIZE; j++) {
     gsl_vector_set(vector, j, d_vector[j]);
+    // gsl_vector_set(orig_vector, j, d_vector[j]);
   }
 
   printf("First matrix row:\n");
@@ -45,6 +51,7 @@ int main(void) {
   // Forward
 
   // Steps by equations
+  size_t swap_counter = 0;
   for (size_t step = 0; step < MATRIX_SIZE - 1; step++) {
 
 
@@ -66,13 +73,22 @@ int main(void) {
         size_t eq_max_idx = gsl_vector_max_index(&subcol.vector) + eq_idx;
 
         // swap rows
-        if (eq_idx != eq_max_idx) {
+        double cell = gsl_matrix_get(matrix, eq_max_idx, eq_idx);
+        if (cell == 0) {
+          goto err;
+        }
+        else if (eq_idx != eq_max_idx) {
           gsl_matrix_swap_rows(matrix, eq_idx, eq_max_idx);
+          gsl_vector_swap_elements(vector, eq_idx, eq_max_idx);
+
+          // gsl_matrix_swap_rows(orig_matrix, eq_idx, eq_max_idx);
+          // gsl_vector_swap_elements(orig_vector, eq_idx, eq_max_idx);
+
+          swap_counter++;
         }
       }
 
-      double divider = gsl_matrix_get(matrix, step, step);
-      double multiplier = gsl_matrix_get(matrix, eq_idx, step) / divider;
+      double multiplier = gsl_matrix_get(matrix, eq_idx, step) / gsl_matrix_get(matrix, step, step);
 
       gsl_matrix_set(matrix, eq_idx, step, 0);
 
@@ -95,8 +111,12 @@ int main(void) {
 
   double det = 1;
   for (size_t i = 0; i < MATRIX_SIZE; i++) {
-    det += gsl_matrix_get(matrix, i, i);
+    det *= gsl_matrix_get(matrix, i, i);
   }
+  if (swap_counter % 2 != 0) {
+    det *= -1;
+  }
+
 
   printf("det = %f\n\n", det);
 
@@ -137,5 +157,9 @@ int main(void) {
     printf("%f = %f\n", sum, d_vector[row]);
   }
 
-  return 0;
+  exit(EXIT_SUCCESS);
+
+  err:
+    fprintf(stderr, "No decision.\n");
+    exit(EXIT_FAILURE);
 }
