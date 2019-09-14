@@ -55,15 +55,15 @@ int main(void) {
       {
         // Get vector column from submatrix
         size_t subcol_size = MATRIX_SIZE - eq_idx;
-        gsl_vector_view col = gsl_matrix_subcolumn(matrix, eq_idx, eq_idx, subcol_size);
+        gsl_vector_view subcol = gsl_matrix_subcolumn(matrix, eq_idx, eq_idx, subcol_size);
 
         // Find max idx
-        gsl_vector *col_copy = gsl_vector_alloc(subcol_size);
-        gsl_vector_memcpy(col_copy, &col.vector);
+        gsl_vector *subcol_copy = gsl_vector_alloc(subcol_size);
+        gsl_vector_memcpy(subcol_copy, &subcol.vector);
         for (size_t i = 0; i < subcol_size; i++) {
-          gsl_vector_set(col_copy, i, abs(gsl_vector_get(&col.vector, i)));
+          gsl_vector_set(subcol_copy, i, abs(gsl_vector_get(&subcol.vector, i)));
         }
-        size_t eq_max_idx = gsl_vector_max_index(&col.vector) + eq_idx;
+        size_t eq_max_idx = gsl_vector_max_index(&subcol.vector) + eq_idx;
 
         // swap rows
         if (eq_idx != eq_max_idx) {
