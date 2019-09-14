@@ -16,25 +16,19 @@ int main(void) {
 
   // Alloc matrix`s
   gsl_matrix *matrix = gsl_matrix_alloc(MATRIX_SIZE, MATRIX_SIZE);
-  gsl_matrix *orig_matrix = gsl_matrix_alloc(MATRIX_SIZE, MATRIX_SIZE);
-
   gsl_vector *vector = gsl_vector_alloc(MATRIX_SIZE);
-  gsl_vector *orig_vector = gsl_vector_alloc(MATRIX_SIZE);
-
   gsl_vector *result = gsl_vector_alloc(MATRIX_SIZE);
 
   // Init matrix
   for (size_t i = 0; i < MATRIX_SIZE; i++) {
     for (size_t j = 0; j < MATRIX_SIZE; j++) {
       gsl_matrix_set(matrix, i, j, d_matrix[i][j]);
-      gsl_matrix_set(orig_matrix, i, j, d_matrix[i][j]);
     }
   }
 
   // Init vector
   for (size_t j = 0; j < MATRIX_SIZE; j++) {
     gsl_vector_set(vector, j, d_vector[j]);
-    gsl_vector_set(orig_vector, j, d_vector[j]);
   }
 
   printf("First matrix row:\n");
@@ -105,10 +99,10 @@ int main(void) {
     double sum = 0;
 
     for (size_t col = 0; col < MATRIX_SIZE; col++) {
-      sum += gsl_matrix_get(orig_matrix, row, col) * gsl_vector_get(result, col);
+      sum += d_matrix[row][col] * gsl_vector_get(result, col);
     }
 
-    printf("%f = %f\n", sum, gsl_vector_get(orig_vector, row));
+    printf("%f = %f\n", sum, d_vector[row]);
   }
 
   return 0;
