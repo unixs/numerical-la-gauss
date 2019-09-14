@@ -70,6 +70,13 @@ int main(void) {
 
   // Check det
 
+  double det = 1;
+  for (size_t i = 0; i < MATRIX_SIZE; i++) {
+    det += gsl_matrix_get(matrix, i, i);
+  }
+
+  printf("det = %f\n\n", det);
+
   // Back
 
   for (ssize_t eq_idx = MATRIX_SIZE - 1; eq_idx >= 0; eq_idx--) { //1
