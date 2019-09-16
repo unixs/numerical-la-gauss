@@ -1,1 +1,1 @@
-# feodorov-numerical-gauss
+# numerical-la-gauss
